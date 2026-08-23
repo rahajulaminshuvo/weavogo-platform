@@ -1,0 +1,34 @@
+# WeavoGo Platform Root Workspace
+# This enables monorepo support with npm/yarn workspaces
+
+{
+  "name": "weavogo-platform",
+  "version": "1.0.0-alpha",
+  "description": "WeavoGo Platform - Enterprise Microservices",
+  "private": true,
+  "workspaces": [
+    "services/api-gateway",
+    "services/auth-security",
+    "services/master-data",
+    "services/hcm",
+    "services/plm",
+    "services/erp",
+    "services/mes",
+    "shared/libs/*",
+    "shared/models/*"
+  ],
+  "scripts": {
+    "setup": "bash scripts/setup-dev-env.sh",
+    "docker:up": "docker-compose -f docker-compose.monorepo.yml up",
+    "docker:down": "docker-compose -f docker-compose.monorepo.yml down",
+    "docker:logs": "docker-compose -f docker-compose.monorepo.yml logs -f",
+    "docker:restart": "docker-compose -f docker-compose.monorepo.yml restart",
+    "test:all": "dotnet test",
+    "build:all": "dotnet build",
+    "clean:all": "dotnet clean && rm -rf **/bin **/obj"
+  },
+  "devDependencies": {
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0"
+  }
+}

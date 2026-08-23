@@ -1,0 +1,298 @@
+version: '3.8'
+
+services:
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./services/api-gateway
+      dockerfile: Dockerfile
+    container_name: weavogo-api-gateway
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - AUTH_SERVICE_URL=http://auth-service:5001
+      - MASTER_DATA_SERVICE_URL=http://master-data:5002
+      - HCM_SERVICE_URL=http://hcm-service:5003
+      - PLM_SERVICE_URL=http://plm-service:5004
+      - ERP_SERVICE_URL=http://erp-service:5005
+      - MES_SERVICE_URL=http://mes-service:5006
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+      - consul
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5000/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Auth & Security Service
+  auth-service:
+    build:
+      context: ./services/auth-security
+      dockerfile: Dockerfile
+    container_name: weavogo-auth-service
+    ports:
+      - "5001:5001"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5001
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-weavogo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_NAME=weavogo_auth
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-guest}
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5001/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Master Data Service
+  master-data:
+    build:
+      context: ./services/master-data
+      dockerfile: Dockerfile
+    container_name: weavogo-master-data
+    ports:
+      - "5002:5002"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5002
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-weavogo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_NAME=weavogo_master_data
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_USER=${RABBITMQ_USER:-guest}
+      - RABBITMQ_PASSWORD=${RABBITMQ_PASSWORD:-guest}
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5002/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # HCM Service
+  hcm-service:
+    build:
+      context: ./services/hcm
+      dockerfile: Dockerfile
+    container_name: weavogo-hcm-service
+    ports:
+      - "5003:5003"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5003
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-weavogo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_NAME=weavogo_hcm
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5003/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PLM Service
+  plm-service:
+    build:
+      context: ./services/plm
+      dockerfile: Dockerfile
+    container_name: weavogo-plm-service
+    ports:
+      - "5004:5004"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5004
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-weavogo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_NAME=weavogo_plm
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5004/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ERP Service
+  erp-service:
+    build:
+      context: ./services/erp
+      dockerfile: Dockerfile
+    container_name: weavogo-erp-service
+    ports:
+      - "5005:5005"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5005
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-weavogo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_NAME=weavogo_erp
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5005/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # MES Service
+  mes-service:
+    build:
+      context: ./services/mes
+      dockerfile: Dockerfile
+    container_name: weavogo-mes-service
+    ports:
+      - "5006:5006"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5006
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-weavogo_user}
+      - DB_PASSWORD=${DB_PASSWORD:-changeme}
+      - DB_NAME=weavogo_mes
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:5006/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: weavogo-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-weavogo_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USER:-weavogo_user}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: weavogo-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # RabbitMQ Message Queue
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: weavogo-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    networks:
+      - weavogo-network
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Consul Service Discovery
+  consul:
+    image: consul:latest
+    container_name: weavogo-consul
+    ports:
+      - "8500:8500"
+      - "8600:8600/udp"
+    command: agent -server -ui -bootstrap-expect=1 -client=0.0.0.0
+    volumes:
+      - consul_data:/consul/data
+    environment:
+      CONSUL_BIND_INTERFACE: eth0
+    networks:
+      - weavogo-network
+
+volumes:
+  postgres_data:
+  redis_data:
+  rabbitmq_data:
+  consul_data:
+
+networks:
+  weavogo-network:
+    driver: bridge
