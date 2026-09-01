@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0FB5E8C0-8F8E-46B3-9FFB-2226249DE4FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavoGo.Master.Api", "src\WeavoGo.Master.Api\WeavoGo.Master.Api.csproj", "{48D94713-BD86-4A97-B2C1-DAF395073C86}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{015936EE-05FA-4C38-92CF-A18CBFF2BD86}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WeavoGo.Master.Tests", "tests\WeavoGo.Master.Tests\WeavoGo.Master.Tests.csproj", "{D33024A3-1AA2-425E-BB79-DCCFA026D337}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{48D94713-BD86-4A97-B2C1-DAF395073C86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{48D94713-BD86-4A97-B2C1-DAF395073C86}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{48D94713-BD86-4A97-B2C1-DAF395073C86}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{48D94713-BD86-4A97-B2C1-DAF395073C86}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D33024A3-1AA2-425E-BB79-DCCFA026D337}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D33024A3-1AA2-425E-BB79-DCCFA026D337}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D33024A3-1AA2-425E-BB79-DCCFA026D337}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D33024A3-1AA2-425E-BB79-DCCFA026D337}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{48D94713-BD86-4A97-B2C1-DAF395073C86} = {0FB5E8C0-8F8E-46B3-9FFB-2226249DE4FD}
+		{D33024A3-1AA2-425E-BB79-DCCFA026D337} = {015936EE-05FA-4C38-92CF-A18CBFF2BD86}
+	EndGlobalSection
+EndGlobal
