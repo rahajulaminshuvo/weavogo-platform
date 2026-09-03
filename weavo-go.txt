@@ -1,0 +1,201 @@
+WeavoGo_Platform/
+├── .github/                        # CI/CD Pipelines & GitHub Actions Workflows
+│   └── workflows/
+│       ├── build-and-test.yml
+│       └── deploy-k8s.yml
+├── docs/                           # OpenAPI Specs, Architecture Decision Records (ADRs), gRPC Proto Definitions
+│   ├── adr/
+│   ├── api-specs/
+│   └── proto/
+│
+├── src/
+│   ├── BuildingBlocks/             # Shared Kernel & Infrastructure Libraries (Cross-Cutting Concerns)
+│   │   ├── Weavo.BuildingBlocks.Kernel/        # Domain primitives: Entity, AggregateRoot, ValueObject, IDomainEvent
+│   │   ├── Weavo.BuildingBlocks.Application/   # CQRS Pipeline Behaviors (Validation, Logging, Performance, UnitOfWork)
+│   │   ├── Weavo.BuildingBlocks.Infrastructure/# EF Core Interceptors (Audit, Soft Delete), Redis Cache, Outbox pattern
+│   │   ├── Weavo.BuildingBlocks.Messaging/     # MassTransit/RabbitMQ wrappers, Integration Events, Published Event Bus
+│   │   ├── Weavo.BuildingBlocks.Observability/ # OpenTelemetry, Serilog structured logging, Prometheus metrics, Health checks
+│   │   └── Weavo.BuildingBlocks.Security/      # Claims Principal extensions, Multi-Tenant context, Service-to-Service Auth
+│   │
+│   ├── Gateways/                   # Edge Routing & Backend-For-Frontend (BFF) Layers
+│   │   ├── Weavo.YarpGateway/            # Central Edge Proxy (Token Validation, Rate Limiting, Dynamic Route Mapping)
+│   │   └── Weavo.Bff.Web/                # BFF Layer for Web Apps (Aggregates response payloads for frontend clients)
+│   │
+│   ├── PlatformServices/           # --- 1. SHARED ENTERPRISE INFRASTRUCTURE SERVICES ---
+│   │   │
+│   │   ├── Identity/               # Single Sign-On, OIDC, Multi-Tenant Context
+│   │   │   ├── Identity.Domain/
+│   │   │   ├── Identity.Application/
+│   │   │   ├── Identity.Infrastructure/
+│   │   │   └── Identity.API/
+│   │   │
+│   │   ├── ApprovalEngine/         # Dynamic Multi-Tier Workflow & Approval Engine
+│   │   │   ├── ApprovalEngine.Domain/
+│   │   │   ├── ApprovalEngine.Application/
+│   │   │   ├── ApprovalEngine.Infrastructure/
+│   │   │   └── ApprovalEngine.API/
+│   │   │
+│   │   ├── DocumentManagement/     # Enterprise DMS (S3/MinIO File Storage, Versioning, Previews)
+│   │   │   ├── DocumentManagement.Domain/
+│   │   │   ├── DocumentManagement.Application/
+│   │   │   ├── DocumentManagement.Infrastructure/
+│   │   │   └── DocumentManagement.API/
+│   │   │
+│   │   ├── Notification/           # Multi-Channel Dispatcher (Email, SMS, WebSockets via SignalR, Mobile Push)
+│   │   │   ├── Notification.Domain/
+│   │   │   ├── Notification.Application/
+│   │   │   ├── Notification.Infrastructure/
+│   │   │   └── Notification.API/
+│   │   │
+│   │   ├── AuditLogging/           # Centralized Audit Trails & System Compliance Traces
+│   │   │   ├── AuditLogging.Domain/
+│   │   │   ├── AuditLogging.Application/
+│   │   │   ├── AuditLogging.Infrastructure/
+│   │   │   └── AuditLogging.API/
+│   │   │
+│   │   ├── IntegrationGateway/     # External Enterprise Gateways (EDI, Banking ISO20022/MT940, External Webhooks)
+│   │   │   ├── IntegrationGateway.Domain/
+│   │   │   ├── IntegrationGateway.Application/
+│   │   │   ├── IntegrationGateway.Infrastructure/
+│   │   │   └── IntegrationGateway.API/
+│   │   │
+│   │   └── AnalyticsReporting/     # Analytics, Reporting & Dashboard Engines (ClickHouse / Read-Replicas)
+│   │       ├── AnalyticsReporting.Domain/
+│   │       ├── AnalyticsReporting.Application/
+│   │       ├── AnalyticsReporting.Infrastructure/
+│   │       └── AnalyticsReporting.API/
+│   │
+│   ├── MasterDataServices/         # --- 2. FINE-GRAINED ENTERPRISE MASTER DATA SERVICES ---
+│   │   │
+│   │   ├── OrganizationSubsystem/  # Multi-Tenant Group Organization Structure
+│   │   │   ├── TenantMaster/
+│   │   │   ├── BusinessTypeMaster/
+│   │   │   ├── CompanyMaster/
+│   │   │   ├── BranchMaster/
+│   │   │   ├── DepartmentMaster/
+│   │   │   ├── CostCenterMaster/
+│   │   │   └── WarehouseLocationMaster/
+│   │   │
+│   │   ├── ItemMaster/             # Materials, Finished Goods, Raw Materials, SKUs, Variants
+│   │   │   ├── ItemMaster.Domain/
+│   │   │   ├── ItemMaster.Application/
+│   │   │   ├── ItemMaster.Infrastructure/
+│   │   │   └── ItemMaster.API/
+│   │   │
+│   │   ├── CustomerMaster/         # Customers, Bill-To/Ship-To Addresses, Credit Terms
+│   │   │   ├── CustomerMaster.Domain/
+│   │   │   ├── CustomerMaster.Application/
+│   │   │   ├── CustomerMaster.Infrastructure/
+│   │   │   └── CustomerMaster.API/
+│   │   │
+│   │   ├── VendorMaster/           # Suppliers, Subcontractors, Payment Terms, Banking Details
+│   │   │   ├── VendorMaster.Domain/
+│   │   │   ├── VendorMaster.Application/
+│   │   │   ├── VendorMaster.Infrastructure/
+│   │   │   └── VendorMaster.API/
+│   │   │
+│   │   ├── UomMaster/              # Units of Measure, Conversion Rules (e.g., Kg to Meter, Box to Piece)
+│   │   │   ├── UomMaster.Domain/
+│   │   │   ├── UomMaster.Application/
+│   │   │   ├── UomMaster.Infrastructure/
+│   │   │   └── UomMaster.API/
+│   │   │
+│   │   ├── CurrencyMaster/         # Multi-Currency Registry, Exchange Rates, Conversion Rules
+│   │   │   ├── CurrencyMaster.Domain/
+│   │   │   ├── CurrencyMaster.Application/
+│   │   │   ├── CurrencyMaster.Infrastructure/
+│   │   │   └── CurrencyMaster.API/
+│   │   │
+│   │   ├── CountryMaster/          # Countries, States/Provinces, Cities, Postal/ZIP Codes
+│   │   │   ├── CountryMaster.Domain/
+│   │   │   ├── CountryMaster.Application/
+│   │   │   ├── CountryMaster.Infrastructure/
+│   │   │   └── CountryMaster.API/
+│   │   │
+│   │   └── TaxMaster/              # Tax Structures, VAT, Duty Rates, HSN/SAC Codes
+│   │       ├── TaxMaster.Domain/
+│   │       ├── TaxMaster.Application/
+│   │       ├── TaxMaster.Infrastructure/
+│   │       └── TaxMaster.API/
+│   │
+│   └── BusinessServices/           # --- 3. CORE WEAVO ERP BUSINESS MODULES ---
+│       │
+│       ├── WeavoFI/                # Financial Accounting & Controlling (GL, AP, AR, Cost Centers)
+│       │   ├── WeavoFI.Domain/
+│       │   ├── WeavoFI.Application/
+│       │   ├── WeavoFI.Infrastructure/
+│       │   └── WeavoFI.API/
+│       │
+│       ├── WeavoSD/                # Sales & Distribution (Order-To-Cash, Pricing Rules, Invoicing)
+│       │   ├── WeavoSD.Domain/
+│       │   ├── WeavoSD.Application/
+│       │   ├── WeavoSD.Infrastructure/
+│       │   └── WeavoSD.API/
+│       │
+│       ├── WeavoMM/                # Materials Management & Procurement (Requisitions, POs, Vendor Evaluation)
+│       │   ├── WeavoMM.Domain/
+│       │   ├── WeavoMM.Application/
+│       │   ├── WeavoMM.Infrastructure/
+│       │   └── WeavoMM.API/
+│       │
+│       ├── WeavoWM/                # Warehouse Management & Inventory (Stock Bins, Batching, RFID Stream Listeners)
+│       │   ├── WeavoWM.Domain/
+│       │   ├── WeavoWM.Application/
+│       │   ├── WeavoWM.Infrastructure/
+│       │   └── WeavoWM.API/
+│       │
+│       ├── WeavoMES/               # Manufacturing Execution & Shop Floor Control (BOM, Work Centers, MQTT IoT Devices)
+│       │   ├── WeavoMES.Domain/
+│       │   ├── WeavoMES.Application/
+│       │   ├── WeavoMES.Infrastructure/
+│       │   └── WeavoMES.API/
+│       │
+│       ├── WeavoQM/                # Quality Management (Inspection Lots, Quality Control, Sampling, CAPA)
+│       │   ├── WeavoQM.Domain/
+│       │   ├── WeavoQM.Application/
+│       │   ├── WeavoQM.Infrastructure/
+│       │   └── WeavoQM.API/
+│       │
+│       ├── WeavoPM/                # Plant Maintenance (Equipment Master, Work Orders, Preventive Maintenance)
+│       │   ├── WeavoPM.Domain/
+│       │   ├── WeavoPM.Application/
+│       │   ├── WeavoPM.Infrastructure/
+│       │   └── WeavoPM.API/
+│       │
+│       ├── WeavoHCM/               # Human Capital Management (HRIS, Attendance Processing, Payroll Rules, Shift Rosters)
+│       │   ├── WeavoHCM.Domain/
+│       │   ├── WeavoHCM.Application/
+│       │   ├── WeavoHCM.Infrastructure/
+│       │   └── WeavoHCM.API/
+|       |
+│       ├── WeavoESS/               # Employee Self Service (Attendance, LeaveApplication,Approval,Payslip)
+│       │   ├── WeavoESS.Domain/
+│       │   ├── WeavoESS.Application/
+│       │   ├── WeavoESS.Infrastructure/
+│       │   └── WeavoESS.API/
+│       │
+│       └── WeavoPS/                # Project Systems & Portfolio Management (WBS, Cost Tracking, Resource Allocation)
+│           ├── WeavoPS.Domain/
+│           ├── WeavoPS.Application/
+│           ├── WeavoPS.Infrastructure/
+│           └── WeavoPS.API/
+│
+├── tests/                          # Centralized Automated Test Suite
+│   ├── ArchitectureTests/           # NetArchTest suites (Enforces Clean Architecture rules and dependency flows)
+│   ├── Shared/                     # Reusable Test Fixtures & Infrastructure Harnesses
+│   │   ├── Weavo.Tests.Shared.Kernel/          # Builders, Domain Customizations, AutoFixture setup
+│   │   ├── Weavo.Tests.Shared.Messaging/       # MassTransit In-Memory Test Harnesses & Event Collectors
+│   │   └── Weavo.Tests.Shared.TestContainers/  # Docker TestContainers configuration for SQL Server, Redis, RabbitMQ
+│   └── Services/                   # Service-Specific Unit and Integration Tests
+│       ├── Weavo.MES.Tests/
+│       ├── Weavo.HCM.Tests/
+│       └── Weavo.FI.Tests/
+│
+├── deploy/                         # Infrastructure Code & Deployment Scripts
+│   ├── k8s/                        # Helm Charts & Kubernetes Manifests per microservice
+│   ├── docker-compose/             # Local Development Stack (SQL Server, Redis, RabbitMQ, MinIO)
+│   └── terraform/                  # Cloud Provisioning Templates (AWS/Azure/GCP)
+│
+├── Directory.Build.props           # Shared .NET Build Settings (Target Framework, C# Language Level, Nullable)
+├── Directory.Packages.props        # Central Package Management (CPM) for unified NuGet Versioning
+└── WeavoGo_Platform.sln            # Solution File
