@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "ItemMaster.Api": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:2962;http://localhost:2963"
+    }
+  }
+}

@@ -1,5 +1,205 @@
-bin/
-obj/
-*.user
+# ==========================================================================
+# WeavoGo_Platform — .gitignore
+# Stack: .NET 8 (backend/), SQL Server DDL (database/), shell + python tooling
+#
+# Placeholder folders are kept in the repo by a .gitkeep file. The negation
+# below must stay above every other rule, and no directory rule here may
+# cover a .gitkeep path — git cannot re-include a file inside an excluded
+# directory.
+# ==========================================================================
+
+!.gitkeep
+!**/.gitkeep
+
+# --------------------------------------------------------------------------
+# .NET build output
+# --------------------------------------------------------------------------
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+[Bb]uild[Ll]og.*
+artifacts/
+publish/
+[Pp]ublish[Oo]utput/
+*.[Pp]ublish.xml
+*.publishproj
+PublishScripts/
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.cache
+*.tlog
+project.lock.json
+project.fragment.lock.json
+
+# --------------------------------------------------------------------------
+# IDE / editor
+# --------------------------------------------------------------------------
 .vs/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
+*.sln.docstates
+*.suo
+*.user
+*.userosscache
+*.userprefs
+*.rsuser
+*.DotSettings.user
+_ReSharper*/
+*.[Rr]e[Ss]harper
+.fake/
+.ionide/
+*.swp
+*~
+
+# --------------------------------------------------------------------------
+# Tests / coverage / profiling
+# --------------------------------------------------------------------------
+[Tt]est[Rr]esult*/
+TestResult.xml
+coverage*.json
+coverage*.xml
+coverage*.info
+*.coverage
+*.coveragexml
+*.trx
+*.VisualState.xml
+BenchmarkDotNet.Artifacts/
+*.psess
+*.vsp
+*.vspx
+
+# --------------------------------------------------------------------------
+# Secrets & local configuration — never commit
+# JWT signing keys live in `dotnet user-secrets`, not in the repo.
+# --------------------------------------------------------------------------
+secrets.json
+appsettings.Local.json
+appsettings.*.Local.json
+appsettings.*.local.json
+*.local.json
+.env
+.env.*
+!.env.example
+!.env.template
+*.pfx
+*.p12
+*.snk
+*.key
+*.pem
+*.cer
+*.crt
+*.publishsettings
+ServiceConfiguration.Local.cscfg
+
+# --------------------------------------------------------------------------
+# NuGet
+# --------------------------------------------------------------------------
+*.nupkg
+*.snupkg
+packages/
+!packages/build/
+*.nuget.props
+*.nuget.targets
+.nuget/
+nuget.config.user
+
+# --------------------------------------------------------------------------
+# Entity Framework / database
+# EF migrations ARE source — only tooling scratch output is ignored.
+# --------------------------------------------------------------------------
+*.mdf
+*.ldf
+*.ndf
+*.bak
+*.bacpac
+*.dacpac
+*.sqlite
+*.db
+*.dbmdl
+*.dbproj.schemaview
+ScaffoldingReadMe.txt
+
+# --------------------------------------------------------------------------
+# Containers / infrastructure state
+# --------------------------------------------------------------------------
+docker-compose.override.yml
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+.kube/
+kubeconfig
+
+# --------------------------------------------------------------------------
+# Logs & runtime scratch
+# --------------------------------------------------------------------------
+*.log
+logs/
+[Ll]og/
+npm-debug.log*
+yarn-error.log*
+*.tmp
+*.temp
+*.bak.*
+*.orig
+*.rej
+
+# --------------------------------------------------------------------------
+# Python tooling (database/tools/)
+# --------------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# --------------------------------------------------------------------------
+# Node / frontend (BFF assets, future SPA)
+# --------------------------------------------------------------------------
 node_modules/
+dist/
+.next/
+.nuxt/
+.parcel-cache/
+*.tsbuildinfo
+
+# --------------------------------------------------------------------------
+# Agent tooling — share project config, keep personal overrides local
+# --------------------------------------------------------------------------
+.claude/settings.local.json
+
+# --------------------------------------------------------------------------
+# OS cruft
+# --------------------------------------------------------------------------
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# --------------------------------------------------------------------------
+# Legacy — retired monolith, do not track
+# --------------------------------------------------------------------------
+backend-old/

@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <RootNamespace>ItemMaster.Api</RootNamespace>
+    <AssemblyName>ItemMaster.Api</AssemblyName>
+    <Description>ItemMaster HTTP host: minimal API endpoints and composition root.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Swashbuckle.AspNetCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" />
+  </ItemGroup>
+
+  <!--
+    The composition root is the only place allowed to reference every layer -
+    it is where the object graph is wired.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\ItemMaster.Application\ItemMaster.Application.csproj" />
+    <ProjectReference Include="..\ItemMaster.Domain\ItemMaster.Domain.csproj" />
+    <ProjectReference Include="..\ItemMaster.Infrastructure\ItemMaster.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Application\Weavo.BuildingBlocks.Application.csproj" />
+  </ItemGroup>
+
+</Project>

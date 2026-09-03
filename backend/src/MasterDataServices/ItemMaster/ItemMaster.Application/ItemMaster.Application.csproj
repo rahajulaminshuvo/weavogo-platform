@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ItemMaster.Application</RootNamespace>
+    <AssemblyName>ItemMaster.Application</AssemblyName>
+    <Description>
+      ItemMaster use cases: CQRS commands, queries, handlers and validators.
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+  <!--
+    References Domain and the shared building blocks - never Infrastructure.
+    Persistence is reached through interfaces declared here and implemented
+    outward, which keeps the dependency arrow pointing in.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\ItemMaster.Domain\ItemMaster.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Application\Weavo.BuildingBlocks.Application.csproj" />
+  </ItemGroup>
+
+</Project>
