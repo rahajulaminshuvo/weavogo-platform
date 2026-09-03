@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Weavo.BuildingBlocks.Kernel</RootNamespace>
+    <AssemblyName>Weavo.BuildingBlocks.Kernel</AssemblyName>
+    <Description>
+      Domain primitives shared by every bounded context: Entity, AggregateRoot
+      and IDomainEvent.
+    </Description>
+  </PropertyGroup>
+
+  <!--
+    Deliberately empty: the shared kernel has NO package or project references.
+    Every service's Domain layer depends on this assembly, so anything added
+    here is forced on all of them.
+  -->
+
+</Project>

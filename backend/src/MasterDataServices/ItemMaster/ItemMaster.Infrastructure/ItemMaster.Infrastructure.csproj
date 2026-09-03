@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ItemMaster.Infrastructure</RootNamespace>
+    <AssemblyName>ItemMaster.Infrastructure</AssemblyName>
+    <Description>
+      ItemMaster persistence: EF Core DbContext, entity configurations, the
+      transactional Outbox and its background dispatcher.
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup Label="EF Core">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup Label="Hosting extensions">
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ItemMaster.Application\ItemMaster.Application.csproj" />
+    <ProjectReference Include="..\ItemMaster.Domain\ItemMaster.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Messaging\Weavo.BuildingBlocks.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>

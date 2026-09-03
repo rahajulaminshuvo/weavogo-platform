@@ -1,0 +1,48 @@
+<Project>
+
+  <!--
+    Shared build settings for every project under backend/.
+    Imported automatically by MSBuild; individual .csproj files inherit these
+    and should not restate them.
+  -->
+
+  <PropertyGroup Label="Framework">
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Code Quality">
+    <!-- A warning that reaches main is a warning nobody will ever fix. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!--
+      CS1591 (missing XML comment on a public member) is informative in the IDE
+      but too noisy to fail a build across 100+ projects.
+    -->
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Determinism">
+    <!-- Reproducible builds: identical sources produce byte-identical output. -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Metadata">
+    <Product>WeavoGo Platform</Product>
+    <Company>Weavo</Company>
+    <Authors>Weavo Engineering</Authors>
+    <Copyright>Copyright (c) Weavo</Copyright>
+    <NeutralLanguage>en</NeutralLanguage>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Packaging">
+    <!-- Nothing here is published to NuGet; services ship as containers. -->
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Weavo.BuildingBlocks.Messaging</RootNamespace>
+    <AssemblyName>Weavo.BuildingBlocks.Messaging</AssemblyName>
+    <Description>
+      Integration event contracts and the transport-agnostic IEventBus
+      abstraction.
+    </Description>
+  </PropertyGroup>
+
+  <!--
+    No MassTransit reference here on purpose. This assembly holds the CONTRACT;
+    the MassTransit/RabbitMQ implementation belongs in
+    Weavo.BuildingBlocks.Infrastructure.
+  -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\Weavo.BuildingBlocks.Kernel\Weavo.BuildingBlocks.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ItemMaster.Domain</RootNamespace>
+    <AssemblyName>ItemMaster.Domain</AssemblyName>
+    <Description>
+      ItemMaster bounded context: aggregates, domain events and invariants.
+      No infrastructure concerns.
+    </Description>
+  </PropertyGroup>
+
+  <!--
+    The Domain layer references the shared kernel and NOTHING else - no EF Core,
+    no MediatR, no ASP.NET. This is what keeps the business rules testable
+    without a database.
+  -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Kernel\Weavo.BuildingBlocks.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

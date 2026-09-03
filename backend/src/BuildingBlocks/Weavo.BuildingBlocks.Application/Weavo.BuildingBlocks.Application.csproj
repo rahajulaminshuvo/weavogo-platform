@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Weavo.BuildingBlocks.Application</RootNamespace>
+    <AssemblyName>Weavo.BuildingBlocks.Application</AssemblyName>
+    <Description>
+      Cross-cutting CQRS pipeline behaviors: logging, validation, performance
+      and unit-of-work.
+    </Description>
+  </PropertyGroup>
+
+  <!-- Versions come from Directory.Packages.props (CPM). -->
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Weavo.BuildingBlocks.Kernel\Weavo.BuildingBlocks.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>
