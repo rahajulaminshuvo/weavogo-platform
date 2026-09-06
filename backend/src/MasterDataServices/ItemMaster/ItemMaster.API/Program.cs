@@ -168,6 +168,28 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 // ---------------------------------------------------------------------------
+// Database migration and seeding
+// ---------------------------------------------------------------------------
+// Runs before the pipeline starts serving, so no request can arrive against an
+// unmigrated schema. A scope is required: the seeder and its DbContext are
+// scoped, and app.Services is the root provider.
+//
+// Development only. In production, run migrations as a separate deployment step
+// -- several replicas booting at once would otherwise race to migrate the same
+// database, and a schema change would be triggered by a pod restart rather than
+// by an intentional release.
+if (app.Environment.IsDevelopment())
+{
+    await using (var scope = app.Services.CreateAsyncScope())
+    {
+        var seeder = scope.ServiceProvider
+            .GetRequiredService<ItemMasterDbContextSeeder>();
+
+        await seeder.SeedAsync().ConfigureAwait(false);
+    }
+}
+
+// ---------------------------------------------------------------------------
 // Pipeline
 // ---------------------------------------------------------------------------
 app.UseExceptionHandler();

@@ -60,6 +60,10 @@ public static class DependencyInjection
 
         services.AddScoped<IItemMasterRepository, ItemMasterRepository>();
 
+        // Scoped, like the DbContext it depends on. Resolving it as a singleton
+        // would capture a scoped DbContext and outlive its lifetime.
+        services.AddScoped<ItemMasterDbContextSeeder>();
+
         services.AddHostedService<ProcessOutboxMessagesJob>();
 
         return services;
