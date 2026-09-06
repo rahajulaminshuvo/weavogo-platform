@@ -64,6 +64,15 @@ public sealed class ItemMasterDbContext : DbContext
     /// committed without the event announcing it. Providers without transaction
     /// support (the in-memory provider used in tests) fall back to two saves.
     /// </para>
+    /// <para>
+    /// The transaction is opened inside an <c>IExecutionStrategy</c> delegate.
+    /// The connection is configured with <c>EnableRetryOnFailure</c>, and a
+    /// retrying strategy refuses a user-initiated transaction it cannot replay:
+    /// calling <c>BeginTransaction</c> directly throws
+    /// <see cref="InvalidOperationException"/> on the first insert. Wrapping the
+    /// whole unit of work tells EF Core exactly which block to re-execute after
+    /// a transient fault.
+    /// </para>
     /// </remarks>
     public override async Task<int> SaveChangesAsync(
         CancellationToken cancellationToken = default)
@@ -83,19 +92,24 @@ public sealed class ItemMasterDbContext : DbContext
                 .ConfigureAwait(false);
         }
 
-        var transaction = await Database
-            .BeginTransactionAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var strategy = Database.CreateExecutionStrategy();
 
-        await using (transaction.ConfigureAwait(false))
+        return await strategy.ExecuteAsync(async () =>
         {
-            var affected = await SaveInsertedItemsAsync(insertedItems, cancellationToken)
+            var transaction = await Database
+                .BeginTransactionAsync(cancellationToken)
                 .ConfigureAwait(false);
 
-            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+            await using (transaction.ConfigureAwait(false))
+            {
+                var affected = await SaveInsertedItemsAsync(insertedItems, cancellationToken)
+                    .ConfigureAwait(false);
 
-            return affected;
-        }
+                await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+
+                return affected;
+            }
+        }).ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -117,13 +131,18 @@ public sealed class ItemMasterDbContext : DbContext
             return SaveInsertedItems(insertedItems);
         }
 
-        using var transaction = Database.BeginTransaction();
+        var strategy = Database.CreateExecutionStrategy();
 
-        var affected = SaveInsertedItems(insertedItems);
+        return strategy.Execute(() =>
+        {
+            using var transaction = Database.BeginTransaction();
 
-        transaction.Commit();
+            var affected = SaveInsertedItems(insertedItems);
 
-        return affected;
+            transaction.Commit();
+
+            return affected;
+        });
     }
 
     private async Task<int> SaveInsertedItemsAsync(
