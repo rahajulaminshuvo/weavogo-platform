@@ -138,10 +138,25 @@ empty `PropertyName` and the JSON error dictionary gets an empty-string key.
 
 ## Database
 
-`database/*.sql` is currently the **authoritative** schema; the EF model mirrors it
-(`ItemMasterConfiguration` maps `dbo.ItemMaster` column-for-column). No EF migrations exist yet.
-Before generating the first one, decide which side owns the schema — otherwise migrations and the
-hand-written DDL will fight.
+**EF Core owns the schema.** `Persistence/Migrations/…_InitialItemMaster` was generated from the
+model and applied to `WeavoMasterDB` on `192.168.3.34`; it mirrors `database/05_schema_item.sql`
+column-for-column. The hand-written DDL is now a reference, not the source of truth — change the
+entity configuration and add a migration, don't edit the `.sql`.
+
+Caveat: the generated migration does **not** carry the `CK_ItemMaster_*` CHECK constraints from
+the DDL. They are enforced in the domain and the validators only; add them via
+`migrationBuilder.Sql(...)` if you want the database to back them up too.
+
+### The first connection to 192.168.3.34 stalls
+
+Cold connects to port 1433 hang 10-15s, then every subsequent connect takes ~2ms. The host is
+fine (445/3389/80 answer instantly, SQL Server 2022 responds once connected) — it is off-subnet
+via the default gateway, and some device on the path builds NAT/firewall state on first contact.
+
+This is why the connection string carries **`Connect Timeout=60`**. Without it the 15s default
+can expire mid-handshake, and combined with `EnableRetryOnFailure(5)` start-up appears to hang
+indefinitely rather than failing. Do not remove it. If start-up looks stuck at
+"Opening connection", wait — it is the cold path, not a deadlock.
 
 ---
 
