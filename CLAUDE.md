@@ -176,9 +176,17 @@ the output directory. Stop it, then `rm -rf src/.../bin src/.../obj`.
 
 ```bash
 cd backend/src/MasterDataServices/ItemMaster/ItemMaster.Api
-dotnet user-secrets set "JwtSettings:Secret" "<32+ char key>"   # once; never commit a secret
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<connection string>"
+dotnet user-secrets set "JwtSettings:Secret" "<32+ char key>"
 ASPNETCORE_ENVIRONMENT=Development dotnet run
 ```
+
+**Secrets never go in `appsettings.json`.** Every `appsettings*.json` is
+gitignored except `appsettings.Example.json`, which documents the required keys
+with placeholder values. The committed `appsettings.json` holds an empty
+`DefaultConnection`; the real value comes from user-secrets (locally) or
+`ConnectionStrings__DefaultConnection` (in a container). This rule exists because
+a live SQL password reached three commits before it did.
 
 Every endpoint requires a JWT (`SetFallbackPolicy` + `RequireAuthenticatedUser`), except
 `/health/live` and `/health/ready`. Swagger UI at `/swagger` has a bearer input.

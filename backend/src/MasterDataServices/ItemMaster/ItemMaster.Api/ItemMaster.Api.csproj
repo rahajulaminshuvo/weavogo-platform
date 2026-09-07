@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <RootNamespace>ItemMaster.Api</RootNamespace>
     <AssemblyName>ItemMaster.Api</AssemblyName>
     <Description>ItemMaster HTTP host: minimal API endpoints and composition root.</Description>
+    <UserSecretsId>b37705f7-ac0d-417c-beb2-b85d3ae0ad61</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
