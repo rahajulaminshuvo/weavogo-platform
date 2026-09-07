@@ -88,10 +88,24 @@ BenchmarkDotNet.Artifacts/
 # JWT signing keys live in `dotnet user-secrets`, not in the repo.
 # --------------------------------------------------------------------------
 secrets.json
+
+# Every appsettings variant is ignored by default. A live SQL password reached
+# three commits before this rule existed; the safe default is to exclude the
+# whole family and re-admit only files proven to hold no secrets.
+appsettings.json
+appsettings.*.json
+
+# Re-admit the template. It documents the required keys with placeholder values
+# and is the file a new developer copies from.
+!appsettings.Example.json
+!appsettings.Template.json
+
+# Never re-admit these, whatever a broader rule above might allow.
 appsettings.Local.json
 appsettings.*.Local.json
 appsettings.*.local.json
 *.local.json
+
 .env
 .env.*
 !.env.example
