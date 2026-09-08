@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Weavo.BuildingBlocks.Application.Behaviors;
+using Weavo.BuildingBlocks.Messaging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,6 +122,14 @@ builder.Services.AddValidatorsFromAssembly(applicationAssembly);
 // 5. Infrastructure -- EF Core, repositories and the Outbox dispatcher
 // ---------------------------------------------------------------------------
 builder.Services.AddItemMasterInfrastructure(builder.Configuration);
+
+// ---------------------------------------------------------------------------
+// 5b. Messaging -- MassTransit over RabbitMQ (B.5.2)
+// ---------------------------------------------------------------------------
+// Queue topology, retry and dead-letter policy come from BuildingBlocks so all
+// services share one configuration. Consumers are discovered from the
+// Application assembly, beside the handlers they feed.
+builder.Services.AddWeavoMessaging(builder.Configuration, applicationAssembly);
 
 builder.Services.AddHealthChecks()
     .AddDbContextCheck<ItemMasterDbContext>(name: "itemmaster-db", tags: ["ready"]);

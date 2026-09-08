@@ -6,7 +6,8 @@ using Microsoft.Extensions.DependencyInjection;
 using ItemMaster.Application.Abstractions;
 using ItemMaster.Infrastructure.BackgroundJobs;
 using ItemMaster.Infrastructure.Persistence;
-using ItemMaster.Infrastructure.Persistence.Interceptors;
+using Weavo.BuildingBlocks.Infrastructure.Idempotency;
+using Weavo.BuildingBlocks.Infrastructure.Outbox;
 using ItemMaster.Infrastructure.Persistence.Repositories;
 
 /// <summary>
@@ -38,7 +39,14 @@ public static class DependencyInjection
                 "Connection string 'DefaultConnection' is not configured.");
 
         // Stateless and thread-safe, so one instance serves every context.
+        // Shared across services per B.3.4, not reimplemented per context.
         services.AddSingleton<ConvertDomainEventsToOutboxMessagesInterceptor>();
+
+        // Redis deduplication keys for idempotent consumption (B.5.3), backed by
+        // the shared Redis Cluster in B.4.8. Registered even when this service
+        // only publishes: it will consume other services' events soon enough,
+        // and the connection is a singleton either way.
+        services.AddItemMasterIdempotency(configuration);
 
         services.AddDbContext<ItemMasterDbContext>(options =>
         {

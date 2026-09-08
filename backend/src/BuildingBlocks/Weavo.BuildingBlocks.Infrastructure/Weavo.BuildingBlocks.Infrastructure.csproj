@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Weavo.BuildingBlocks.Infrastructure</RootNamespace>
+    <AssemblyName>Weavo.BuildingBlocks.Infrastructure</AssemblyName>
+    <Description>
+      Shared infrastructure per B.3.4: the Transactional Outbox (B.5.3), EF Core
+      interceptors, and Redis-backed idempotent consumption.
+    </Description>
+  </PropertyGroup>
+
+  <ItemGroup Label="Persistence">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+  </ItemGroup>
+
+  <ItemGroup Label="Caching - Redis dedup keys (B.5.3)">
+    <PackageReference Include="StackExchange.Redis" />
+  </ItemGroup>
+
+  <ItemGroup Label="Hosting">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Weavo.BuildingBlocks.Kernel\Weavo.BuildingBlocks.Kernel.csproj" />
+    <ProjectReference Include="..\Weavo.BuildingBlocks.Messaging\Weavo.BuildingBlocks.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>

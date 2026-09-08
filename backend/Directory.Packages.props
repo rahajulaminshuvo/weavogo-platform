@@ -41,6 +41,11 @@
     <PackageVersion Include="MassTransit.RabbitMQ" Version="8.5.10" />
   </ItemGroup>
 
+  <ItemGroup Label="Caching - Redis (B.4.8 Redis Cluster; B.5.3 dedup locks)">
+    <PackageVersion Include="StackExchange.Redis" Version="2.13.17" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.30" />
+  </ItemGroup>
+
   <ItemGroup Label="API / OpenAPI">
     <PackageVersion Include="Swashbuckle.AspNetCore" Version="7.3.2" />
   </ItemGroup>

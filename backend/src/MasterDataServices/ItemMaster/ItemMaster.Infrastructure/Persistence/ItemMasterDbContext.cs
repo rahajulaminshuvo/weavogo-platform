@@ -2,8 +2,7 @@ namespace ItemMaster.Infrastructure.Persistence;
 
 using Microsoft.EntityFrameworkCore;
 using ItemMaster.Domain.Entities;
-using ItemMaster.Infrastructure.Persistence.Outbox;
-using ItemMaster.Infrastructure.Persistence.Interceptors;
+using Weavo.BuildingBlocks.Infrastructure.Outbox;
 
 /// <summary>
 /// EF Core unit of work for the ItemMaster bounded context.
@@ -50,6 +49,10 @@ public sealed class ItemMasterDbContext : DbContext
         ArgumentNullException.ThrowIfNull(modelBuilder);
 
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ItemMasterDbContext).Assembly);
+
+        // The Outbox mapping now comes from BuildingBlocks (B.3.4), so it is not
+        // picked up by the assembly scan above.
+        modelBuilder.ApplyConfiguration(new OutboxMessageConfiguration("dbo", isSqlServer: true));
         base.OnModelCreating(modelBuilder);
     }
 

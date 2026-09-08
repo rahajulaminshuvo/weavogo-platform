@@ -31,6 +31,7 @@
     <ProjectReference Include="..\ItemMaster.Domain\ItemMaster.Domain.csproj" />
     <ProjectReference Include="..\ItemMaster.Infrastructure\ItemMaster.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Application\Weavo.BuildingBlocks.Application.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Messaging\Weavo.BuildingBlocks.Messaging.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,28 +1,30 @@
 namespace ItemMaster.Infrastructure.BackgroundJobs;
 
 using System.Text.Json;
-using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ItemMaster.Infrastructure.Persistence;
-using ItemMaster.Infrastructure.Persistence.Outbox;
+using Weavo.BuildingBlocks.Infrastructure.Outbox;
+using ItemMaster.Infrastructure.Messaging;
+using Weavo.BuildingBlocks.Messaging;
 
 /// <summary>
-/// Polls the Outbox and republishes pending domain events through MediatR.
+/// Polls the Outbox and hands unpublished rows to MassTransit (B.5.3).
 /// </summary>
 /// <remarks>
 /// <para>
-/// Delivery is at-least-once: a crash between publishing and stamping
-/// <c>ProcessedOnUtc</c> replays the message on the next pass. Notification
-/// handlers must therefore be idempotent, keyed on
-/// <c>OutboxMessage.Id</c> (which carries the domain event's own EventId).
+/// A row is marked processed only after the broker confirms receipt. The
+/// processor can still fail between publish and stamp, so delivery is
+/// <b>at-least-once</b>: consumers deduplicate via
+/// <c>IIdempotencyStore</c> rather than assuming the broker delivers once.
 /// </para>
 /// <para>
-/// A failed message is stamped processed with its error recorded, so one
-/// poisoned row cannot block the queue behind it. Inspect rows where
-/// <c>Error IS NOT NULL</c> to find them.
+/// A row that fails repeatedly is abandoned after
+/// <see cref="MaxAttempts"/> tries with its error retained, so one poisoned
+/// message cannot block the queue behind it. Query
+/// <c>WHERE Error IS NOT NULL</c> to find them.
 /// </para>
 /// </remarks>
 /// <param name="serviceScopeFactory">Creates a scope per polling pass.</param>
@@ -32,6 +34,7 @@ public sealed partial class ProcessOutboxMessagesJob(
     ILogger<ProcessOutboxMessagesJob> logger) : BackgroundService
 {
     private const int BatchSize = 20;
+    private const int MaxAttempts = 5;
 
     private static readonly TimeSpan PollInterval = TimeSpan.FromSeconds(5);
 
@@ -46,7 +49,6 @@ public sealed partial class ProcessOutboxMessagesJob(
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
-                // Normal shutdown, not a failure.
                 break;
             }
             catch (Exception ex)
@@ -60,7 +62,6 @@ public sealed partial class ProcessOutboxMessagesJob(
             }
             catch (OperationCanceledException)
             {
-                // Shutdown requested during the delay.
                 break;
             }
         }
@@ -71,10 +72,10 @@ public sealed partial class ProcessOutboxMessagesJob(
         using var scope = serviceScopeFactory.CreateScope();
 
         var dbContext = scope.ServiceProvider.GetRequiredService<ItemMasterDbContext>();
-        var publisher = scope.ServiceProvider.GetRequiredService<IPublisher>();
+        var eventBus = scope.ServiceProvider.GetRequiredService<IEventBus>();
 
         var messages = await dbContext.Set<OutboxMessage>()
-            .Where(m => m.ProcessedOnUtc == null)
+            .Where(m => m.ProcessedOnUtc == null && m.AttemptCount < MaxAttempts)
             .OrderBy(m => m.OccurredOnUtc)
             .Take(BatchSize)
             .ToListAsync(stoppingToken)
@@ -87,6 +88,8 @@ public sealed partial class ProcessOutboxMessagesJob(
 
         foreach (var message in messages)
         {
+            message.AttemptCount++;
+
             try
             {
                 var eventType = Type.GetType(message.Type);
@@ -99,28 +102,53 @@ public sealed partial class ProcessOutboxMessagesJob(
                     continue;
                 }
 
-                var domainEvent = JsonSerializer.Deserialize(message.Content, eventType);
+                var payload = JsonSerializer.Deserialize(message.Content, eventType);
 
-                if (domainEvent is not null)
+                if (payload is null)
                 {
-                    await publisher.Publish(domainEvent, stoppingToken).ConfigureAwait(false);
+                    message.Error = "Payload deserialized to null";
+                    message.ProcessedOnUtc = DateTime.UtcNow;
+                    continue;
                 }
 
+                // Domain events stay inside this bounded context (B.5.2); only a
+                // translated IntegrationEvent crosses the boundary, so a consumer
+                // never takes a dependency on ItemMaster's internal model.
+                var integrationEvent = IntegrationEventTranslator.Translate(payload, message);
+
+                if (integrationEvent is null)
+                {
+                    // Internal-only event: nothing subscribes across services.
+                    // Mark handled so it is not retried forever.
+                    message.ProcessedOnUtc = DateTime.UtcNow;
+                    continue;
+                }
+
+                await eventBus
+                    .PublishAsync(integrationEvent, stoppingToken)
+                    .ConfigureAwait(false);
+
+                // Stamped only after the broker confirms. A crash before this
+                // line replays the message - which is exactly why consumers
+                // must be idempotent.
                 message.ProcessedOnUtc = DateTime.UtcNow;
+                message.Error = null;
             }
             catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                LogMessageFailed(logger, message.Id, ex);
+                LogMessageFailed(logger, message.Id, message.AttemptCount, ex);
                 message.Error = ex.ToString();
-                message.ProcessedOnUtc = DateTime.UtcNow;
+
+                if (message.AttemptCount >= MaxAttempts)
+                {
+                    LogMessageAbandoned(logger, message.Id, MaxAttempts);
+                    message.ProcessedOnUtc = DateTime.UtcNow;
+                }
             }
         }
 
         await dbContext.SaveChangesAsync(stoppingToken).ConfigureAwait(false);
     }
-
-    // Source-generated log methods, required by CA1848 which
-    // Directory.Build.props promotes to an error.
 
     [LoggerMessage(
         EventId = 5000,
@@ -131,12 +159,19 @@ public sealed partial class ProcessOutboxMessagesJob(
     [LoggerMessage(
         EventId = 5001,
         Level = LogLevel.Error,
-        Message = "Failed to process outbox message {Id}")]
-    private static partial void LogMessageFailed(ILogger logger, Guid id, Exception exception);
+        Message = "Failed to publish outbox message {Id} (attempt {Attempt})")]
+    private static partial void LogMessageFailed(
+        ILogger logger, Guid id, int attempt, Exception exception);
 
     [LoggerMessage(
         EventId = 5002,
         Level = LogLevel.Error,
         Message = "Error occurred while executing Outbox processing loop")]
     private static partial void LogLoopFailed(ILogger logger, Exception exception);
+
+    [LoggerMessage(
+        EventId = 5003,
+        Level = LogLevel.Critical,
+        Message = "Outbox message {Id} abandoned after {MaxAttempts} attempts; inspect Error column")]
+    private static partial void LogMessageAbandoned(ILogger logger, Guid id, int maxAttempts);
 }

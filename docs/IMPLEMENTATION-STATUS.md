@@ -36,7 +36,7 @@ services are meant to be cloned from.
 | `Weavo.BuildingBlocks.Kernel` | **Built** | `Entity<TId>`, `AggregateRoot<TId>`, `IDomainEvent`, `DomainEvent`. Zero package references — verified. |
 | `Weavo.BuildingBlocks.Application` | **Built** | `LoggingBehavior<,>` (timing + `Activity` tracing), `ValidationBehavior<,>` (FluentValidation) |
 | `Weavo.BuildingBlocks.Messaging` | **Built** | `IEventBus`, `IntegrationEvent` — contracts only, no MassTransit dependency yet |
-| `Weavo.BuildingBlocks.Infrastructure` | **Missing** | Planned: EF interceptors, Redis cache, Outbox. *Currently the Outbox lives inside ItemMaster.Infrastructure and would need extracting to be shared.* |
+| `Weavo.BuildingBlocks.Infrastructure` | **Built** | Transactional Outbox (B.5.3) extracted from ItemMaster and now shared; Redis idempotency store for at-least-once consumption. Redis cache and audit/soft-delete interceptors still to come. |
 | `Weavo.BuildingBlocks.Observability` | **Missing** | Planned: OpenTelemetry, Serilog, Prometheus, health checks |
 | `Weavo.BuildingBlocks.Security` | **Missing** | Planned: claims extensions, multi-tenant context, S2S auth |
 

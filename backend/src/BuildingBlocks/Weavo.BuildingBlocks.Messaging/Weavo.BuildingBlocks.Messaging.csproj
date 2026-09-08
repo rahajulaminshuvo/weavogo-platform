@@ -4,16 +4,17 @@
     <RootNamespace>Weavo.BuildingBlocks.Messaging</RootNamespace>
     <AssemblyName>Weavo.BuildingBlocks.Messaging</AssemblyName>
     <Description>
-      Integration event contracts and the transport-agnostic IEventBus
-      abstraction.
+      Integration event contracts, the transport-agnostic IEventBus, and the
+      MassTransit/RabbitMQ wrappers referenced by B.3.4 and B.11.
     </Description>
   </PropertyGroup>
 
-  <!--
-    No MassTransit reference here on purpose. This assembly holds the CONTRACT;
-    the MassTransit/RabbitMQ implementation belongs in
-    Weavo.BuildingBlocks.Infrastructure.
-  -->
+  <ItemGroup>
+    <PackageReference Include="MassTransit" />
+    <PackageReference Include="MassTransit.RabbitMQ" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Weavo.BuildingBlocks.Kernel\Weavo.BuildingBlocks.Kernel.csproj" />
