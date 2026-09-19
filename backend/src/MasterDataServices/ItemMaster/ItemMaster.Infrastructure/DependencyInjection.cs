@@ -46,7 +46,7 @@ public static class DependencyInjection
         // the shared Redis Cluster in B.4.8. Registered even when this service
         // only publishes: it will consume other services' events soon enough,
         // and the connection is a singleton either way.
-        services.AddItemMasterIdempotency(configuration);
+        services.AddWeavoIdempotency(configuration);
 
         services.AddDbContext<ItemMasterDbContext>(options =>
         {

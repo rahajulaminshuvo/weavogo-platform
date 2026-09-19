@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>PlatformServices.Identity.Domain</RootNamespace>
+    <AssemblyName>PlatformServices.Identity.Domain</AssemblyName>
+    <Description>Identity bounded context: UserAccount, UserCredential, Role, UserRole (Appendix A.12).</Description>
+  </PropertyGroup>
+
+  <!-- Kernel only. No EF Core, no ASP.NET, no MediatR - enforced by B.11.2 rule 1. -->
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Kernel\Weavo.BuildingBlocks.Kernel.csproj" />
+  </ItemGroup>
+
+</Project>

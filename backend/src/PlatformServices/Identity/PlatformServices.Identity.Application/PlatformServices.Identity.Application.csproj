@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>PlatformServices.Identity.Application</RootNamespace>
+    <AssemblyName>PlatformServices.Identity.Application</AssemblyName>
+    <Description>Identity use cases: token issuance commands, validators, repository contracts.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" />
+    <PackageReference Include="FluentValidation" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlatformServices.Identity.Domain\PlatformServices.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Application\Weavo.BuildingBlocks.Application.csproj" />
+  </ItemGroup>
+
+</Project>

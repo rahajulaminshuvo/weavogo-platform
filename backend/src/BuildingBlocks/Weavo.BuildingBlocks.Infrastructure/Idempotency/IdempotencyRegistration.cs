@@ -24,7 +24,7 @@ public static class IdempotencyRegistration
     /// for any environment running more than a single instance.
     /// </para>
     /// </remarks>
-    public static IServiceCollection AddItemMasterIdempotency(
+    public static IServiceCollection AddWeavoIdempotency(
         this IServiceCollection services,
         IConfiguration configuration)
     {

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>PlatformServices.Identity.Infrastructure</RootNamespace>
+    <AssemblyName>PlatformServices.Identity.Infrastructure</AssemblyName>
+    <Description>Identity persistence, JWT issuance, password hashing, integration-event translation.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" />
+    <PackageReference Include="BCrypt.Net-Next" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PlatformServices.Identity.Application\PlatformServices.Identity.Application.csproj" />
+    <ProjectReference Include="..\PlatformServices.Identity.Domain\PlatformServices.Identity.Domain.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Infrastructure\Weavo.BuildingBlocks.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\Weavo.BuildingBlocks.Messaging\Weavo.BuildingBlocks.Messaging.csproj" />
+  </ItemGroup>
+
+</Project>
